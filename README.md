@@ -2,26 +2,17 @@
 
 A simple chat server based on the WebSocket protocol. Uses C# 4.0 and external libs [Fleck](http://github.com/statianzo/Fleck) and [FridayThe13th] (http://github.com/jprichardson/FridayThe13th).
 
-See [SteffenSchuette/WebSocket-Chat-Server](http://github.com/FlorianWolters/WebSocket-Chat-Client) for an example WebSocket chat client using HTML5, jQuery and CSS.
+See [FlorianWolters/WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client) for an example WebSocket chat client using HTML5, jQuery and CSS.
 
-## Features
-
-* The chat client automatically tries to establish a connection to the chat server on startup.
-* The user can connect and disconnect the client via buttons manually.
-* The user can enter a username to use in the chat.
-* Chat messages can be send via the return key on the keyboard or a button.
-* A chat message (and the output) consists of the timestamp, the username and the text of the message.
-* Application Programming Interface (API) documentation with [JSDoc](http://code.google.com/p/jsdoc-toolkit/w)
 
 ## Usage
 
-1. [optional] Start a WebSocket chat server which implements the defined chat protocol (see below).
-2. [optional] Edit the connection options in the configuration file `assets/js/configuration.js` to match with the WenSocket chat server.
-3. Start the `index.html` in a web browser.
+1. Start a WebSocket chat server with two arguments <hostname> <port>. To start it with the standard configuration (which are also used in the [WebSocket-Chat-Client] (http://github.com/FlorianWolters/WebSocket-Chat-Client) use: 
+=> WebSocketServer.exe localhost 80
 
 # Chat Protocol
 
-All you need to know to implement you own WebSocket chat server is the following:
+A sample Chat client implementing the following "protocol" can be found at (http://github.com/FlorianWolters/WebSocket-Chat-Client).
 
 ```js
 var jsonObj = {
@@ -40,15 +31,14 @@ You expect a JSON object that contains three elements (`ts`, `uid`, `msg`). Afte
 
 ## Used Technologies
 
-* [jQuery](http://jquery.com) v1.7.2
-* [HTML5](http://w3.org/TR/html5)
-* [CSS](http://w3.org/Style/CSS)
-* [normalize.css](http://necolas.github.com/normalize.css)
+* [Microsoft C#] (http://www.microsoft.com/downloads/de-de/details.aspx?familyid=5765d7a8-7722-4888-a970-ac39b33fd8ab) .NET Framework 4 Client Profile.
+* [Fleck](http://github.com/statianzo/Fleck) v0.9.5-2
+* [FridayThe13th] (http://github.com/jprichardson/FridayThe13th) build 3rd April 2012
 
 ## TODO
 
-* Refactor JavaScript source code (`assets/js/chatclient.js` and `assets/js/configuration.js`) to use object-oriented programming (OOP).
-* Correct JSDoc documentation (currently only the file comments appear within the HTML output of jsdoc-toolkit).
+* Write test methods.
+* Optimise source code.
 
 ## License
 
