@@ -7,14 +7,14 @@ See [FlorianWolters/WebSocket-Chat-Client](http://github.com/FlorianWolters/WebS
 
 ## Usage
 
-Start the WebSocket chat server with the two arguments `<hostname>` and `<port>`. To start it with the standard configuration (which are also used in the [WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client) use:
+Start the WebSocket chat server with the two arguments `<hostname>` and `<port>`. To start it with the standard configuration (which is also used in the [WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client)) use:
 ```cmd
-    WebSocketServer.exe localhost 80
+WebSocketServer.exe localhost 80
 ```
 
 # Chat Protocol
 
-A sample Chat client implementing the following "protocol" can be found at [FlorianWolters/WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client).
+A sample chat client implementing the following "protocol" can be found at [FlorianWolters/WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client).
 
 ```js
 var jsonObj = {
