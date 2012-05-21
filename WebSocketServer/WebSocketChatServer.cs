@@ -6,6 +6,7 @@
 // <author>Steffen Schuette</author><email>steffen.schuette@web.de</email>
 // <author>Florian Wolters</author><email>florian.wolters85@googlemail.com</email>
 //
+// <version>0.1.0-beta</version>
 //-----------------------------------------------------------------------------------
 
 namespace WebSocketServer
@@ -32,8 +33,13 @@ namespace WebSocketServer
             if (args.Length < 2)
             {
                 Console.WriteLine("Illegal arguments. Usage: <hostname> <port>");
+                Console.WriteLine("Press key to close WebSocket server...");
 
-                throw new Exception("Illegal arguments. Usage: <hostname> <port>");
+                // Wait until key is pressed
+                Console.ReadLine();
+
+                // Close application
+                System.Environment.Exit(-1);
             }
 
             // <hostname> to bind the server socket to
@@ -109,19 +115,35 @@ namespace WebSocketServer
                             // Extract fields from the received JSON object
                             dynamic json = jsonParser.Parse(message);
 
+                            // Get the current UNIX timestamp
+                            double ts = json.ts;
+
+                            string timestamp = string.Empty;
+
                             // Get user id from json object
                             string uid = json.uid;
 
                             // Gut chat message from json object
                             string msg = json.msg;
 
-                            FleckLog.Info("Message from " + uid + ": " + msg);
+                            // Calculate timestamp from the received UNIX seconds since 1970-01-01.
+                            DateTime dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
+
+                            // Add the received timestamp         
+                            dateTime = dateTime.AddSeconds(ts);
+                            
+                            // Build a string representation with the format
+                            // <yyyy-mm-dd hh:mm:ss> e.g. <2012-05-10 22:56:26>
+                            timestamp = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+                            FleckLog.Info("Msg rcv: " + uid + " @ " + timestamp + " => " + msg);
 
                             // Update all connected clients
                             connectedSockets.ToList().ForEach(s => s.Send(message));
                         }
                         catch (Exception e)
                         {
+                            // Received message exception (e.g. unknown JSON object)
                             FleckLog.Error(e.ToString());
                         }
                     }; // END socket.OnMessage = message =>
@@ -131,6 +153,9 @@ namespace WebSocketServer
             {
                 FleckLog.Error("Error opening WebSocket on <" + connectionInfo + ">");
                 FleckLog.Error(e.ToString());
+
+                // Wait until key is pressed
+                Console.ReadLine();
 
                 // Close application
                 System.Environment.Exit(-1);
