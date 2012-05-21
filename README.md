@@ -7,12 +7,14 @@ See [FlorianWolters/WebSocket-Chat-Client](http://github.com/FlorianWolters/WebS
 
 ## Usage
 
-1. Start a WebSocket chat server with two arguments <hostname> <port>. To start it with the standard configuration (which are also used in the [WebSocket-Chat-Client] (http://github.com/FlorianWolters/WebSocket-Chat-Client) use: 
-=> WebSocketServer.exe localhost 80
+Start the WebSocket chat server with the two arguments `<hostname>` and `<port>`. To start it with the standard configuration (which are also used in the [WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client) use:
+```cmd
+    WebSocketServer.exe localhost 80
+```
 
 # Chat Protocol
 
-A sample Chat client implementing the following "protocol" can be found at (http://github.com/FlorianWolters/WebSocket-Chat-Client).
+A sample Chat client implementing the following "protocol" can be found at [FlorianWolters/WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client).
 
 ```js
 var jsonObj = {
@@ -31,9 +33,9 @@ You expect a JSON object that contains three elements (`ts`, `uid`, `msg`). Afte
 
 ## Used Technologies
 
-* [Microsoft C#] (http://www.microsoft.com/downloads/de-de/details.aspx?familyid=5765d7a8-7722-4888-a970-ac39b33fd8ab) .NET Framework 4 Client Profile.
+* [Microsoft .NET Framework 4 Client Profile](http://microsoft.com/downloads/details.aspx?familyid=5765d7a8-7722-4888-a970-ac39b33fd8ab).
 * [Fleck](http://github.com/statianzo/Fleck) v0.9.5-2
-* [FridayThe13th] (http://github.com/jprichardson/FridayThe13th) build 3rd April 2012
+* [FridayThe13th](http://github.com/jprichardson/FridayThe13th) build 3rd April 2012
 
 ## TODO
 
