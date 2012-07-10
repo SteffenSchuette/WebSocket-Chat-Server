@@ -1,9 +1,8 @@
 # WebSocket-Chat-Server
 
-A simple chat server based on the WebSocket protocol. Uses C# 4.0 and external libs [Fleck](http://github.com/statianzo/Fleck) and [FridayThe13th] (http://github.com/jprichardson/FridayThe13th).
+A simple chat server based on the WebSocket protocol. Uses C# 4.0 and external libs [Fleck](http://github.com/statianzo/Fleck) and [Newtonsoft.Json] (http://github.com/JamesNK/Newtonsoft.Json).
 
 See [FlorianWolters/WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client) for an example WebSocket chat client using HTML5, jQuery and CSS.
-
 
 ## Usage
 
@@ -16,16 +15,13 @@ WebSocketServer.exe localhost 80
 
 A sample chat client implementing the following "protocol" can be found at [FlorianWolters/WebSocket-Chat-Client](http://github.com/FlorianWolters/WebSocket-Chat-Client).
 
-```js
-var jsonObj = {
-    // The current UNIX timestamp.
-    'ts': Math.round(Date.now() / 1000),
-    // The name of the chat user.
-    'uid': uid,
-    // The text of the chat message.
-    'msg': msg
-};
-```
+  ```json
+  {
+      "ts" : "2012-07-05 19:04:00",
+      "uid": "Steffen Schuette",
+      "msg": "hello, world"
+  }
+  ```
 
 You expect a JSON object that contains three elements (`ts`, `uid`, `msg`). After the processing of the incoming message you have to send a multicast (or broadcast) to all connected chat clients (including the one that has send the message).
 
@@ -35,7 +31,9 @@ You expect a JSON object that contains three elements (`ts`, `uid`, `msg`). Afte
 
 * [Microsoft .NET Framework 4 Client Profile](http://microsoft.com/downloads/details.aspx?familyid=5765d7a8-7722-4888-a970-ac39b33fd8ab).
 * [Fleck](http://github.com/statianzo/Fleck) v0.9.5-2
-* [FridayThe13th](http://github.com/jprichardson/FridayThe13th) build 3rd April 2012
+* [Newtonsoft.Json](http://github.com/JamesNK/Newtonsoft.Json) v4.5.7
+* [StyleCop] (http://stylecop.codeplex.com/) v4.7.34.0 
+* [NUnit] (http://nunit.org) v2.6.0.12051 (February 20, 2012)
 
 ## TODO
 
