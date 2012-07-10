@@ -1,12 +1,9 @@
 ﻿//-----------------------------------------------------------------------------------
 // <copyright file="WebSocketChatServer.cs" company="Hochschule Bremen">
-//     Copyright (c) 2012 Steffen Schuette and Florian Wolters. All rights reserved.
+//     Copyright (c) 2012 Steffen Schuette. All rights reserved.
 // </copyright>
-// 
 // <author>Steffen Schuette</author><email>steffen.schuette@web.de</email>
-// <author>Florian Wolters</author><email>florian.wolters85@googlemail.com</email>
-//
-// <version>0.1.0-beta</version>
+// <version>0.2.0-beta</version>
 //-----------------------------------------------------------------------------------
 
 namespace WebSocketServer
@@ -16,16 +13,16 @@ namespace WebSocketServer
     using System.Linq;
     using System.Text;
     using Fleck;
-    using FridayThe13th;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Simple WebSocket Chat Server example using the Fleck C# WebSocket implementation. 
-    /// This example also utilises the FridayThe13th library to parse JSON objects.
+    /// This example also utilises the Newtonsoft.Json library to build JSON objects.
     /// </summary>
     public class WebSocketChatServer
     {
         /// <summary>
-        /// Simple main method creating the Fleck WebSocketServer and listens
+        /// Simple main method creating the Fleck WebSocketServer
         /// </summary>
         /// <param name="args">Command line arguments: hostname port</param>
         private static void Main(string[] args)
@@ -52,13 +49,10 @@ namespace WebSocketServer
             FleckLog.Level = LogLevel.Info;
 
             // List containing all connected clients
-            List<IWebSocketConnection> connectedSockets = new List<IWebSocketConnection>();
+            Dictionary<Fleck.IWebSocketConnection, string> connectedSockets = new Dictionary<IWebSocketConnection, string>();
 
             // Fleck WebSocketServer object
             Fleck.WebSocketServer server = null;
-
-            // FridayThe13th JSON parser object
-            JsonParser jsonParser = null;
 
             // Sets the connection information how to open the WebSocket
             string connectionInfo = string.Empty;
@@ -84,19 +78,14 @@ namespace WebSocketServer
                     socket.OnOpen = () =>
                     {
                         FleckLog.Info("Client <" + socket.ConnectionInfo.ClientIpAddress + "> connected");
-
-                        // Add the new connected client to the list handling all connected clients
-                        connectedSockets.Add(socket);
                     };
 
                     // Method called when a client disconnects
                     socket.OnClose = () =>
                     {
-                        FleckLog.Info("Client <" + socket.ConnectionInfo.ClientIpAddress + "> disconnected");
-
-                        if (connectedSockets.Contains(socket))
+                        // If socket is stored in connected sockets list, remove it
+                        if (connectedSockets.ContainsKey(socket))
                         {
-                            // Remove the new connected client to the list handling all connected clients
                             connectedSockets.Remove(socket);
                         }
                     };
@@ -104,36 +93,66 @@ namespace WebSocketServer
                     // Method called when a client sends a message
                     socket.OnMessage = message =>
                     {
-                        // Create FridayThe13th JSON Parser object
-                        jsonParser = new JsonParser()
-                        {
-                            CamelizeProperties = false
-                        };
+                        // Timestamp containing the current time with the pattern: 2012-07-06 19:04:23
+                        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                        
+                        // Get user id from receivedJSON object
+                        string uid = string.Empty;
 
-                        // Extract fields from the received JSON object
-                        dynamic json = jsonParser.Parse(message);
-
-                        // Get the current UNIX timestamp
-                        double ts = json.ts;
-
-                        string timestamp = string.Empty;
-
-                        // Get user id from json object
-                        string uid = json.uid;
-
-                        // Gut chat message from json object
-                        string msg = json.msg;
+                        // The chat message object with the TS (timestamp), UID (user id) and MSG (message) properties.
+                        ChatMessage chatMessage = new ChatMessage(); 
 
                         try
                         {
-                            // Convert the received JSON Unix timestamp to the corresponding Berlin time zone timestamp
-                            WebSocketChatServer.ConvertUNIXtimestampToBerlinTimestamp(ts);
+                            if (connectedSockets.ContainsKey(socket))
+                            {
+                                // Get the client user name
+                                uid = connectedSockets[socket];
 
-                            // Server log output
-                            FleckLog.Info("Msg rcv: " + uid + " @ " + timestamp + " => " + msg);
+                                // Build the JSON object which will be send to all connected clients.
+                                // It contains the current timestamp, the user name the message is 
+                                // came from and finally the message itself.
+                                chatMessage.UID = uid;
+                                chatMessage.MSG = message;
 
-                            // Update all connected clients
-                            connectedSockets.ToList().ForEach(s => s.Send(message));
+                                // Socket already stored in connected sockets and send its user name. So send
+                                // assembled JSON object to all connected clients.
+                                foreach (KeyValuePair<Fleck.IWebSocketConnection, string> client in connectedSockets)
+                                {
+                                    client.Key.Send(JsonConvert.SerializeObject(chatMessage));
+                                    FleckLog.Info("Msg rcv: " + uid + " @ " + timestamp + " => " + message);
+                                }
+                            } // END if (connectedSockets.ContainsKey(socket))
+                            else
+                            {
+                                // First message from the socket => message contains the client user name.
+                                // Check now if user name is available. If not, add socket to the connected 
+                                // sockets containing its user name.
+                                if (!connectedSockets.ContainsValue(message))
+                                {
+                                    // Store new connected client with its send user name to the connected sockets.
+                                    connectedSockets.Add(socket, message);
+                                    FleckLog.Info("Client <" + socket.ConnectionInfo.ClientIpAddress + "> set user name to <" + message + ">");
+                                }
+                                else
+                                {
+                                    // Send client that the user name is already in use. The server now has
+                                    // to close the WebSocket to the client
+                                    chatMessage.TS = timestamp;
+                                    chatMessage.UID = uid;
+                                    chatMessage.MSG = "Error: the user name <" + message + "> is already in use!";
+
+                                    // Serialise ChatMessage object to JSON
+                                    socket.Send(JsonConvert.SerializeObject(chatMessage));
+                                    socket.Close();
+
+                                    // If socket is stored in connected sockets list, remove it
+                                    if (connectedSockets.ContainsKey(socket))
+                                    {
+                                        connectedSockets.Remove(socket);
+                                    }
+                                }
+                            }
                         }
                         catch (Exception e)
                         {
@@ -161,40 +180,5 @@ namespace WebSocketServer
                 // loop until user enters "exit" in the console windows
             }
         } // END static void Main(string[] args)
-
-        /// <summary>
-        /// Converts the given UNIX timestamp (seconds since 1970) to a Berlin time zone timestamp 
-        /// with the following format:
-        /// "yyyy-mm-dd hh:mm:ss" e.g. "2012-05-10 22:56:26"
-        /// </summary>
-        /// <param name="receivedUnixTimestamp">UNIX timestamp (seconds since 1970).</param>
-        /// <returns>Converted Berlin time zone timestamp with the format "yyyy-mm-dd hh:mm:ss"</returns>
-        private static string ConvertUNIXtimestampToBerlinTimestamp(double receivedUnixTimestamp)
-        {
-            try
-            {
-                // Western Europe Standard Time String to get summer / winter time for Berlin
-                string berlinTimeZoneKey = "W. Europe Standard Time";
-
-                // TimeZone object for Berlin
-                TimeZoneInfo berlinTimeZone = TimeZoneInfo.FindSystemTimeZoneById(berlinTimeZoneKey);
-
-                // Calculate timestamp from the received UNIX seconds since 1970-01-01.
-                DateTime dateTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
-
-                // Add the received timestamp         
-                dateTime = dateTime.AddSeconds(receivedUnixTimestamp);
-
-                dateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, berlinTimeZone);
-
-                // Build a string representation with the format
-                // <yyyy-mm-dd hh:mm:ss> e.g. <2012-05-10 22:56:26>
-                return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Error parsing timestamp.");
-            }
-        } // END private string ConvertUNIXtimestampToBerlinTimestamp
     } // END class WebSocketExample
 }
