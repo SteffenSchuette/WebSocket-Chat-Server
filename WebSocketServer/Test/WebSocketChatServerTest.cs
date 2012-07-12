@@ -6,7 +6,7 @@
 // <version>0.1.0-beta</version>
 //-----------------------------------------------------------------------------------
 
-namespace WebSocketServer.Test
+namespace WebSocketChatServer.Test
 {
     using System;
     using System.IO;

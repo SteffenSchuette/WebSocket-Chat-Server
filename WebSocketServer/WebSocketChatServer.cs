@@ -6,7 +6,7 @@
 // <version>0.2.0-beta</version>
 //-----------------------------------------------------------------------------------
 
-namespace WebSocketServer
+namespace WebSocketChatServer
 {
     using System;
     using System.Collections.Generic;
@@ -175,7 +175,6 @@ namespace WebSocketServer
                     chatMessage.ts = timestamp;
                     chatMessage.uid = uid;
                     chatMessage.msg = message;
-
                     FleckLog.Info("Msg rcv: " + uid + " @ " + timestamp + " => " + message);
 
                     // Socket already stored in connected sockets and send its user name. So send

@@ -8,7 +8,7 @@
     <ProjectGuid>{76D17385-F8E0-4C9E-B957-C645CA05BEA3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WebSocketServer</RootNamespace>
+    <RootNamespace>WebSocketChatServer</RootNamespace>
     <AssemblyName>WebSocketServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>

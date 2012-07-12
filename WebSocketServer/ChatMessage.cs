@@ -6,7 +6,7 @@
 // <version>0.1.0-beta</version>
 //-----------------------------------------------------------------------------------
 
-namespace WebSocketServer
+namespace WebSocketChatServer
 {
     using System;
     using System.Collections.Generic;
