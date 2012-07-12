@@ -21,16 +21,16 @@ namespace WebSocketServer
         /// <summary>
         /// Gets or sets the Timestamp string with the format "YYYY-MM-DD HH-MM-SS" like "2012-07-05 19:04:00".
         /// </summary>
-        public string TS { get; set; }
+        public string ts { get; set; }
 
         /// <summary>
         /// Gets or sets the user name used by the client.
         /// </summary>
-        public string UID { get; set; }
+        public string uid { get; set; }
 
         /// <summary>
         /// Gets or sets the chat message.
         /// </summary>
-        public string MSG { get; set; }
+        public string msg { get; set; }
     }
 }
