@@ -1,5 +1,5 @@
 # Gitignore base used from Github Gitignore project (https://github.com/github/gitignore)
-# It was extended by the exclusion of *.suo
+# It was extended by the exclusion of *.suo and *.cd (class diagram) files.
 
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/
@@ -32,6 +32,7 @@ x64/
 *.rsp
 *.sbr
 *.suo
+*.cd
 *.tlb
 *.tli
 *.tlh
